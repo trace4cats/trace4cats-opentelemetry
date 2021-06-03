@@ -1,8 +1,11 @@
 ThisBuild / scalaVersion := Dependencies.Versions.scala213
 ThisBuild / crossScalaVersions := Seq(Dependencies.Versions.scala213, Dependencies.Versions.scala212)
 ThisBuild / githubWorkflowTargetTags ++= Seq("v*")
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(RefPredicate.StartsWith(Ref.Tag("v")))
+ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.11")
 
+ThisBuild / githubWorkflowBuildPreamble += WorkflowStep.Run(commands = List("docker-compose up -d"))
+
+ThisBuild / githubWorkflowPublishTargetBranches := Seq(RefPredicate.Equals(Ref.Branch("master")))
 ThisBuild / githubWorkflowPublish := Seq(
   WorkflowStep.Sbt(
     List("ciReleaseSonatype"),
@@ -21,6 +24,7 @@ ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
 )
 
 ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / versionScheme := Some("semver-spec")
 
 ThisBuild / licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 ThisBuild / developers := List(

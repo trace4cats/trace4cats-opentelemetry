@@ -5,40 +5,29 @@ object Dependencies {
     val scala212 = "2.12.14"
     val scala213 = "2.13.6"
 
-    val trace4cats = "0.12.0-RC1"
+    val trace4cats = "0.12.0-RC1+146-d193db1e"
 
-    val cats = "2.6.1"
-    val catsEffect = "3.1.1"
-
-    val catsTestkitScalatest = "2.1.5"
-    val disciplineScalatest = "2.1.5"
-    val discipline = "1.1.5"
-    val scalaCheck = "1.15.4"
-    val scalaCheckShapeless = "1.3.0"
-    val scalaTest = "3.2.9"
+    val circe = "0.14.1"
+    val grpc = "1.38.0"
+    val http4s = "0.23.0-RC1"
+    val openTelemetry = "1.2.0"
+    val scalapb = "0.11.0"
   }
 
-  lazy val catsLaws = "org.typelevel"             %% "cats-laws"              % Versions.cats
-  lazy val catsEffectLaws = "org.typelevel"       %% "cats-effect-laws"       % Versions.catsEffect
-  lazy val catsEffectTestkit = "org.typelevel"    %% "cats-effect-testkit"    % Versions.catsEffect
-  lazy val catsTestkitScalatest = "org.typelevel" %% "cats-testkit-scalatest" % Versions.catsTestkitScalatest
-  lazy val disciplineScalatest = "org.typelevel"  %% "discipline-scalatest"   % Versions.disciplineScalatest
-  lazy val disciplineCore = "org.typelevel"       %% "discipline-core"        % Versions.discipline
-  lazy val scalacheck = "org.scalacheck"          %% "scalacheck"             % Versions.scalaCheck
-  lazy val scalacheckShapeless =
-    "com.github.alexarchambault"       %% "scalacheck-shapeless_1.15" % Versions.scalaCheckShapeless
-  lazy val scalaTest = "org.scalatest" %% "scalatest"                 % Versions.scalaTest
+  lazy val trace4catsExporterCommon = "io.janstenpickle" %% "trace4cats-exporter-common" % Versions.trace4cats
+  lazy val trace4catsExporterHttp = "io.janstenpickle"   %% "trace4cats-exporter-http"   % Versions.trace4cats
+  lazy val trace4catsKernel = "io.janstenpickle"         %% "trace4cats-kernel"          % Versions.trace4cats
+  lazy val trace4catsJaegerIntegrationTest =
+    "io.janstenpickle"                          %% "trace4cats-jaeger-integration-test" % Versions.trace4cats
+  lazy val trace4catsModel = "io.janstenpickle" %% "trace4cats-model"                   % Versions.trace4cats
 
-  lazy val test =
-    Seq(
-      catsLaws,
-      catsEffectLaws,
-      catsEffectTestkit,
-      catsTestkitScalatest,
-      disciplineScalatest,
-      disciplineCore,
-      scalacheck,
-      scalacheckShapeless,
-      scalaTest
-    )
+  lazy val circeGeneric = "io.circe"                       %% "circe-generic-extras"          % Versions.circe
+  lazy val grpcApi = "io.grpc"                              % "grpc-api"                      % Versions.grpc
+  lazy val grpcOkHttp = "io.grpc"                           % "grpc-okhttp"                   % Versions.grpc
+  lazy val http4sBlazeClient = "org.http4s"                %% "http4s-blaze-client"           % Versions.http4s
+  lazy val openTelemetrySdk = "io.opentelemetry"            % "opentelemetry-sdk"             % Versions.openTelemetry
+  lazy val openTelemetryOtlpExporter = "io.opentelemetry"   % "opentelemetry-exporter-otlp"   % Versions.openTelemetry
+  lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetry
+  lazy val openTelemetryProto = "io.opentelemetry"          % "opentelemetry-proto"           % Versions.openTelemetry.concat("-alpha")
+  lazy val scalapbJson = "com.thesamet.scalapb"            %% "scalapb-json4s"                % Versions.scalapb
 }
