@@ -7,6 +7,14 @@
 
 [OpenTelemetry] exporters for [Trace4Cats].
 
+Add it to your `build.sbt`:
+
+```scala
+"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-grpc-exporter" % "<version>"
+"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http-exporter" % "<version>"
+"io.janstenpickle" %% "trace4cats-opentelemetry-jaeger-exporter" % "<version>"
+```
+
 
 ## Contributing
 
