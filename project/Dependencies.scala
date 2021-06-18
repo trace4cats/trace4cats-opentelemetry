@@ -8,7 +8,7 @@ object Dependencies {
     val trace4cats = "0.12.0-RC1+146-d193db1e"
 
     val circe = "0.14.1"
-    val grpc = "1.38.0"
+    val grpc = "1.38.1"
     val http4s = "0.23.0-RC1"
     val openTelemetry = "1.2.0"
     val scalapb = "0.11.0"
