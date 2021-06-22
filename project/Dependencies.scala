@@ -11,7 +11,10 @@ object Dependencies {
     val grpc = "1.38.0"
     val http4s = "0.23.0-RC1"
     val openTelemetry = "1.2.0"
-    val scalapb = "0.11.1"
+    val scalapb = "0.11.0"
+
+    val kindProjector = "0.13.0"
+    val betterMonadicFor = "0.3.1"
   }
 
   lazy val trace4catsExporterCommon = "io.janstenpickle" %% "trace4cats-exporter-common" % Versions.trace4cats
@@ -30,4 +33,7 @@ object Dependencies {
   lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetry
   lazy val openTelemetryProto = "io.opentelemetry"          % "opentelemetry-proto"           % Versions.openTelemetry.concat("-alpha")
   lazy val scalapbJson = "com.thesamet.scalapb"            %% "scalapb-json4s"                % Versions.scalapb
+
+  lazy val kindProjector = ("org.typelevel" % "kind-projector"     % Versions.kindProjector).cross(CrossVersion.full)
+  lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
 }
