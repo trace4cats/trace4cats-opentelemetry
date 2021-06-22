@@ -11,7 +11,7 @@ object Dependencies {
     val grpc = "1.38.0"
     val http4s = "0.23.0-RC1"
     val openTelemetry = "1.2.0"
-    val scalapb = "0.11.0"
+    val scalapb = "0.11.1"
 
     val kindProjector = "0.13.0"
     val betterMonadicFor = "0.3.1"
