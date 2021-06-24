@@ -5,4 +5,4 @@ addSbtPlugin("io.shiftleft"              % "sbt-ci-release-early" % "2.0.16")
 addSbtPlugin("com.thesamet"              % "sbt-protoc"           % "1.0.4")
 addSbtPlugin("com.dwijnand"              % "sbt-dynver"           % "4.1.1")
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.3"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.4"
