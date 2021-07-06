@@ -49,6 +49,7 @@ lazy val `opentelemetry-common` =
       name := "trace4cats-opentelemetry-common",
       libraryDependencies ++= Seq(
         Dependencies.openTelemetrySdk,
+        Dependencies.collectionCompat,
         Dependencies.grpcApi,
         Dependencies.trace4catsModel,
         Dependencies.trace4catsKernel,
