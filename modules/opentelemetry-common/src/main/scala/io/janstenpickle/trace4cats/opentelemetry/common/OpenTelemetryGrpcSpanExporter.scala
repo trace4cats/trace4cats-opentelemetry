@@ -10,7 +10,7 @@ import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan}
 import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.trace.data.SpanData
-import io.opentelemetry.sdk.trace.export.{SpanExporter => OTSpanExporter}
+import io.opentelemetry.sdk.trace.`export`.{SpanExporter => OTSpanExporter}
 
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._

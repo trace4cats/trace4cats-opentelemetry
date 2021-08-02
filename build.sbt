@@ -12,9 +12,8 @@ lazy val commonSettings = Seq(
     val wconf = "-Wconf:src=src_managed/.*:s,any:wv"
     val fatalw = "-Xfatal-warnings"
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 13)) => opts :+ wconf
-      case Some((2, 12)) => opts.filterNot(Set(fatalw)) :+ wconf
-      case _ => opts
+      case Some((2, _)) => opts :+ wconf
+      case _ => opts.filterNot(Set(fatalw))
     }
   },
   Test / fork := true,
@@ -83,10 +82,10 @@ lazy val `opentelemetry-otlp-http-exporter` =
     .settings(
       name := "trace4cats-opentelemetry-otlp-http-exporter",
       libraryDependencies ++= Seq(
-        Dependencies.circeGeneric,
         Dependencies.http4sBlazeClient,
         (Dependencies.openTelemetryProto % "protobuf").intransitive(),
         Dependencies.scalapbJson,
+        Dependencies.json4sNative,
         Dependencies.trace4catsModel,
         Dependencies.trace4catsKernel,
         Dependencies.trace4catsExporterCommon,
