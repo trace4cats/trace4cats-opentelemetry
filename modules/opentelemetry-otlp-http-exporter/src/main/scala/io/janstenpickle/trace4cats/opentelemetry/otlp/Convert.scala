@@ -1,28 +1,27 @@
 package io.janstenpickle.trace4cats.opentelemetry.otlp
 
-import java.util.concurrent.TimeUnit
-
 import cats.Foldable
+import cats.syntax.foldable._
+import cats.syntax.semigroup._
 import cats.syntax.show._
 import com.google.protobuf.ByteString
-import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto._
-import io.circe.{Encoder, Json, JsonObject}
 import io.janstenpickle.trace4cats.model.SpanStatus._
 import io.janstenpickle.trace4cats.model._
+import io.opentelemetry.proto.common.v1.common.AnyValue.Value
 import io.opentelemetry.proto.common.v1.common._
 import io.opentelemetry.proto.resource.v1.resource.Resource
 import io.opentelemetry.proto.trace.v1.trace.Span.SpanKind._
-import io.opentelemetry.proto.trace.v1.trace.Span.Event
-import io.opentelemetry.proto.trace.v1.trace.Status.{DeprecatedStatusCode, StatusCode}
 import io.opentelemetry.proto.trace.v1.trace.Status.StatusCode._
 import io.opentelemetry.proto.trace.v1.trace.{InstrumentationLibrarySpans, ResourceSpans, Span, Status}
 import org.apache.commons.codec.binary.Hex
-import scalapb.UnknownFieldSet
-import cats.syntax.foldable._
-import cats.syntax.semigroup._
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
+import org.json4s.native.JsonMethods._
+import scalapb.json4s.{FormatRegistry, JsonFormat, Printer}
 
+import java.util.concurrent.TimeUnit
 import scala.collection.mutable.ListBuffer
+
 object Convert {
   def toAttributes(attributes: Map[String, AttributeValue]): List[KeyValue] =
     attributes.toList.map {
@@ -97,53 +96,98 @@ object Convert {
         )
       }
 
-  implicit val jsonConfig = Configuration.default.withSnakeCaseConstructorNames.withSnakeCaseMemberNames
+  val formatRegistry: FormatRegistry = JsonFormat.DefaultRegistry
+    .registerWriter[AnyValue](
+      _.value match {
+        case Value.StringValue(value) => "stringValue" -> value
+        case Value.BoolValue(value) => "boolValue" -> value
+        case Value.IntValue(value) => "intValue" -> value
+        case Value.DoubleValue(value) => "doubleValue" -> value
+        case _ => JNothing // Other `Value` subtypes are not used in `toAttributes`
+      },
+      _ => AnyValue.defaultInstance // Decoder is not needed
+    )
+    .registerMessageFormatter[Span](
+      {
+        case (
+              printer,
+              Span(
+                traceId,
+                spanId,
+                traceState,
+                parentSpanId,
+                name,
+                kind,
+                startTimeUnixNano,
+                endTimeUnixNano,
+                attributes,
+                droppedAttributesCount,
+                events,
+                droppedEventsCount,
+                links,
+                droppedLinksCount,
+                status,
+                _ // unknownFields
+              )
+            ) =>
+          val tmp = ("trace_id" -> Hex.encodeHexString(traceId.toByteArray)) ~
+            ("span_id" -> Hex.encodeHexString(spanId.toByteArray)) ~
+            ("trace_state" -> traceState) ~
+            ("parent_span_id" -> Hex.encodeHexString(parentSpanId.toByteArray)) ~
+            ("name" -> name) ~
+            ("kind" -> kind.value) ~
+            ("start_time_unix_nano" -> startTimeUnixNano) ~
+            ("end_time_unix_nano" -> endTimeUnixNano) ~
+            ("attributes" -> attributes.map(printer.toJson)) ~
+            ("dropped_attributes_count" -> droppedAttributesCount) ~
+            ("events" -> events.map(printer.toJson)) ~
+            ("dropped_events_count" -> droppedEventsCount) ~
+            ("links" -> links.map(printer.toJson)) ~
+            ("dropped_links_count" -> droppedLinksCount)
+          status.fold(tmp)(s => tmp ~ ("status" -> printer.toJson(s)))
+      },
+      (_, _) => Span.defaultInstance // Decoder is not needed
+    )
+    .registerMessageFormatter[Span.Link](
+      {
+        case (
+              printer,
+              Span.Link(
+                traceId,
+                spanId,
+                traceState,
+                attributes,
+                droppedAttributesCount,
+                _ // unknownFields
+              )
+            ) =>
+          ("trace_id" -> Hex.encodeHexString(traceId.toByteArray)) ~
+            ("span_id" -> Hex.encodeHexString(spanId.toByteArray)) ~
+            ("trace_state" -> traceState) ~
+            ("attributes" -> attributes.map(printer.toJson)) ~
+            ("dropped_attributes_count" -> droppedAttributesCount)
+      },
+      (_, _) => Span.Link.defaultInstance // Decoder is not needed
+    )
+    .registerWriter[Status](
+      {
+        case Status(
+              _, // deprecatedCode
+              message,
+              code,
+              _ // unknownFields
+            ) =>
+          ("message" -> message) ~
+            ("code" -> code.value)
+      },
+      _ => Status.defaultInstance // Decoder is not needed
+    )
 
-  implicit val unknownFieldSetEncoder: Encoder[UnknownFieldSet] = Encoder.instance(_ => Json.Null)
+  val printer: Printer = new Printer().preservingProtoFieldNames.includingDefaultValueFields
+    .withFormatRegistry(formatRegistry = formatRegistry)
 
-  implicit val byteStringEncoder: Encoder[ByteString] = Encoder.encodeString.contramap { bs =>
-    Hex.encodeHexString(bs.toByteArray)
+  def toJsonString[G[_]: Foldable](batch: Batch[G]): String = {
+    val json = "resource_spans" -> Convert.toResourceSpans(batch).map(printer.toJson).toList
+    compact(render(json))
   }
-  implicit val spanKindEncoder: Encoder[Span.SpanKind] = Encoder.encodeInt.contramap(_.value)
-
-  implicit val arrayValueEncoder: Encoder[ArrayValue] = Encoder.encodeSeq[AnyValue].contramap(_.values)
-  implicit val keyValueListEncoder: Encoder[KeyValueList] = Encoder.encodeSeq[KeyValue].contramap(_.values)
-
-  implicit def valueEncoder: Encoder[AnyValue.Value] =
-    io.circe.generic.semiauto.deriveEncoder[AnyValue.Value].mapJsonObject { obj =>
-      val updatedKeys = obj.toMap.map { case (k, v) =>
-        val chars = k.toCharArray
-
-        chars(0) = Character.toLowerCase(chars(0))
-
-        new String(chars) -> v.hcursor.downField("value").focus.get
-      }
-
-      JsonObject.fromMap(updatedKeys)
-    }
-  implicit def anyValueEncoder: Encoder[AnyValue] = valueEncoder.contramap(_.value)
-  implicit def keyValueEncoder: Encoder[KeyValue] = deriveConfiguredEncoder
-
-  implicit val eventEncoder: Encoder[Event] = deriveConfiguredEncoder
-  implicit val linkEncoder: Encoder[Span.Link] = deriveConfiguredEncoder
-  implicit val statusCodeEncoder: Encoder[StatusCode] = Encoder.encodeInt.contramap(_.value)
-  implicit val deprecatedStatusCodeEncoder: Encoder[DeprecatedStatusCode] = Encoder.encodeInt.contramap(_.value)
-  implicit val statusEncoder: Encoder[Status] = deriveConfiguredEncoder
-
-  implicit val spanEncoder: Encoder[Span] = deriveConfiguredEncoder
-
-  implicit val instrumentationLibraryEncoder: Encoder[InstrumentationLibrary] = deriveConfiguredEncoder
-  implicit val instrumentationLibrarySpansEncoder: Encoder[InstrumentationLibrarySpans] = deriveConfiguredEncoder
-  implicit val resourceEncoder: Encoder[Resource] = deriveConfiguredEncoder
-  implicit val resourceSpansEncoder: Encoder[ResourceSpans] = deriveConfiguredEncoder
-  implicit val resourceSpansIterableEncoder: Encoder[Iterable[ResourceSpans]] =
-    Encoder.encodeJsonObject.contramapObject { resourceSpans =>
-      JsonObject.fromMap(
-        Map("resource_spans" -> Json.fromValues(resourceSpans.map(resourceSpansEncoder(_).deepDropNullValues)))
-      )
-    }
-
-  def toJsonString[G[_]: Foldable](batch: Batch[G]): String = resourceSpansIterableEncoder(
-    toResourceSpans(batch)
-  ).noSpaces
 }
