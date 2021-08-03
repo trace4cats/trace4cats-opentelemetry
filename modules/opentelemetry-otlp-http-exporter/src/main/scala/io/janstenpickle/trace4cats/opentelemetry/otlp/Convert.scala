@@ -103,43 +103,83 @@ object Convert {
         case Value.BoolValue(value) => "boolValue" -> value
         case Value.IntValue(value) => "intValue" -> value
         case Value.DoubleValue(value) => "doubleValue" -> value
-        case _ => JNothing
+        case _ => JNothing // Other `Value` subtypes are not used in `toAttributes`
       },
       _ => AnyValue.defaultInstance // Decoder is not needed
     )
     .registerMessageFormatter[Span](
-      (printer, span) => {
-        val tmp = ("trace_id" -> Hex.encodeHexString(span.traceId.toByteArray)) ~
-          ("span_id" -> Hex.encodeHexString(span.spanId.toByteArray)) ~
-          ("trace_state" -> span.traceState) ~
-          ("parent_span_id" -> Hex.encodeHexString(span.parentSpanId.toByteArray)) ~
-          ("name" -> span.name) ~
-          ("kind" -> span.kind.value) ~
-          ("start_time_unix_nano" -> span.startTimeUnixNano) ~
-          ("end_time_unix_nano" -> span.endTimeUnixNano) ~
-          ("attributes" -> span.attributes.map(printer.toJson)) ~
-          ("dropped_attributes_count" -> span.droppedAttributesCount) ~
-          ("events" -> span.events.map(printer.toJson)) ~
-          ("dropped_events_count" -> span.droppedEventsCount) ~
-          ("links" -> span.links.map(printer.toJson)) ~
-          ("dropped_links_count" -> span.droppedLinksCount)
-        span.status.fold(tmp)(s => tmp ~ ("status" -> printer.toJson(s)))
+      {
+        case (
+              printer,
+              Span(
+                traceId,
+                spanId,
+                traceState,
+                parentSpanId,
+                name,
+                kind,
+                startTimeUnixNano,
+                endTimeUnixNano,
+                attributes,
+                droppedAttributesCount,
+                events,
+                droppedEventsCount,
+                links,
+                droppedLinksCount,
+                status,
+                _ // unknownFields
+              )
+            ) =>
+          val tmp = ("trace_id" -> Hex.encodeHexString(traceId.toByteArray)) ~
+            ("span_id" -> Hex.encodeHexString(spanId.toByteArray)) ~
+            ("trace_state" -> traceState) ~
+            ("parent_span_id" -> Hex.encodeHexString(parentSpanId.toByteArray)) ~
+            ("name" -> name) ~
+            ("kind" -> kind.value) ~
+            ("start_time_unix_nano" -> startTimeUnixNano) ~
+            ("end_time_unix_nano" -> endTimeUnixNano) ~
+            ("attributes" -> attributes.map(printer.toJson)) ~
+            ("dropped_attributes_count" -> droppedAttributesCount) ~
+            ("events" -> events.map(printer.toJson)) ~
+            ("dropped_events_count" -> droppedEventsCount) ~
+            ("links" -> links.map(printer.toJson)) ~
+            ("dropped_links_count" -> droppedLinksCount)
+          status.fold(tmp)(s => tmp ~ ("status" -> printer.toJson(s)))
       },
       (_, _) => Span.defaultInstance // Decoder is not needed
     )
     .registerMessageFormatter[Span.Link](
-      (printer, link) =>
-        ("trace_id" -> Hex.encodeHexString(link.traceId.toByteArray)) ~
-          ("span_id" -> Hex.encodeHexString(link.spanId.toByteArray)) ~
-          ("trace_state" -> link.traceState) ~
-          ("attributes" -> link.attributes.map(printer.toJson)) ~
-          ("dropped_attributes_count" -> link.droppedAttributesCount),
+      {
+        case (
+              printer,
+              Span.Link(
+                traceId,
+                spanId,
+                traceState,
+                attributes,
+                droppedAttributesCount,
+                _ // unknownFields
+              )
+            ) =>
+          ("trace_id" -> Hex.encodeHexString(traceId.toByteArray)) ~
+            ("span_id" -> Hex.encodeHexString(spanId.toByteArray)) ~
+            ("trace_state" -> traceState) ~
+            ("attributes" -> attributes.map(printer.toJson)) ~
+            ("dropped_attributes_count" -> droppedAttributesCount)
+      },
       (_, _) => Span.Link.defaultInstance // Decoder is not needed
     )
     .registerWriter[Status](
-      status =>
-        ("message" -> status.message) ~
-          ("code" -> status.code.value),
+      {
+        case Status(
+              _, // deprecatedCode
+              message,
+              code,
+              _ // unknownFields
+            ) =>
+          ("message" -> message) ~
+            ("code" -> code.value)
+      },
       _ => Status.defaultInstance // Decoder is not needed
     )
 
