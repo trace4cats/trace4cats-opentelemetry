@@ -9,11 +9,10 @@ lazy val commonSettings = Seq(
   },
   scalacOptions := {
     val opts = scalacOptions.value
-    val wconf = "-Wconf:src=src_managed/.*:s,any:wv"
-    val fatalw = "-Xfatal-warnings"
+    val wconf = "-Wconf:any:wv"
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) => opts :+ wconf
-      case _ => opts.filterNot(Set(fatalw))
+      case _ => opts
     }
   },
   Test / fork := true,
@@ -71,7 +70,7 @@ lazy val `opentelemetry-otlp-grpc-exporter` =
     .settings(publishSettings)
     .settings(
       name := "trace4cats-opentelemetry-otlp-grpc-exporter",
-      libraryDependencies ++= Seq(Dependencies.openTelemetryOtlpExporter, Dependencies.grpcOkHttp % Test),
+      libraryDependencies ++= Seq(Dependencies.openTelemetryOtlpExporter),
       libraryDependencies ++= Seq(Dependencies.grpcOkHttp, Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test)
     )
     .dependsOn(`opentelemetry-common`)
@@ -82,16 +81,12 @@ lazy val `opentelemetry-otlp-http-exporter` =
     .settings(
       name := "trace4cats-opentelemetry-otlp-http-exporter",
       libraryDependencies ++= Seq(
+        Dependencies.circeGeneric,
         Dependencies.http4sBlazeClient,
-        (Dependencies.openTelemetryProto % "protobuf").intransitive(),
-        Dependencies.scalapbJson,
-        Dependencies.json4sNative,
         Dependencies.trace4catsModel,
         Dependencies.trace4catsKernel,
         Dependencies.trace4catsExporterCommon,
         Dependencies.trace4catsExporterHttp
       ),
-      libraryDependencies ++= Seq(Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test),
-      Compile / PB.protoSources += target.value / "protobuf_external",
-      Compile / PB.targets := Seq(scalapb.gen(grpc = false, lenses = false) -> (Compile / sourceManaged).value)
+      libraryDependencies ++= Seq(Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test)
     )

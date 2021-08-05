@@ -6,6 +6,7 @@ import cats.syntax.applicative._
 import io.janstenpickle.trace4cats.`export`.HttpSpanExporter
 import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.model.Batch
+import io.janstenpickle.trace4cats.opentelemetry.otlp.json.ResourceSpansBatch
 import org.http4s.client.Client
 import org.http4s.blaze.client.BlazeClientBuilder
 
@@ -30,6 +31,6 @@ object OpenTelemetryOtlpHttpSpanExporter {
     HttpSpanExporter[F, G, String](
       client,
       s"http://$host:$port/v1/trace",
-      (batch: Batch[G]) => Convert.toJsonString(batch)
+      (batch: Batch[G]) => ResourceSpansBatch.from(batch).toJson.noSpaces
     )
 }

@@ -15,8 +15,6 @@ object Dependencies {
     val grpc = "1.39.0"
     val http4s = "0.23.0-RC1"
     val openTelemetry = "1.4.1"
-    val scalapb = "0.12.0"
-    val json4sNative = "4.0.3"
 
     val kindProjector = "0.13.0"
     val betterMonadicFor = "0.3.1"
@@ -29,6 +27,7 @@ object Dependencies {
   lazy val trace4catsJaegerIntegrationTest =
     "io.janstenpickle" %% "trace4cats-jaeger-integration-test" % Versions.trace4catsJaegerIntegrationTest
 
+  lazy val circeGeneric = "io.circe"                       %% "circe-generic"                 % Versions.circe
   lazy val collectionCompat = "org.scala-lang.modules"     %% "scala-collection-compat"       % Versions.collectionCompat
   lazy val grpcApi = "io.grpc"                              % "grpc-api"                      % Versions.grpc
   lazy val grpcOkHttp = "io.grpc"                           % "grpc-okhttp"                   % Versions.grpc
@@ -36,9 +35,6 @@ object Dependencies {
   lazy val openTelemetrySdk = "io.opentelemetry"            % "opentelemetry-sdk"             % Versions.openTelemetry
   lazy val openTelemetryOtlpExporter = "io.opentelemetry"   % "opentelemetry-exporter-otlp"   % Versions.openTelemetry
   lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetry
-  lazy val openTelemetryProto = "io.opentelemetry"          % "opentelemetry-proto"           % Versions.openTelemetry.concat("-alpha")
-  lazy val scalapbJson = "com.thesamet.scalapb"            %% "scalapb-json4s"                % Versions.scalapb
-  lazy val json4sNative = "org.json4s"                     %% "json4s-native"                 % Versions.json4sNative
 
   lazy val kindProjector = ("org.typelevel" % "kind-projector"     % Versions.kindProjector).cross(CrossVersion.full)
   lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
