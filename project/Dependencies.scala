@@ -32,6 +32,7 @@ object Dependencies {
   lazy val grpcApi = "io.grpc"                              % "grpc-api"                      % Versions.grpc
   lazy val grpcOkHttp = "io.grpc"                           % "grpc-okhttp"                   % Versions.grpc
   lazy val http4sBlazeClient = "org.http4s"                %% "http4s-blaze-client"           % Versions.http4s
+  lazy val http4sCirce = "org.http4s"                      %% "http4s-circe"                  % Versions.http4s
   lazy val openTelemetrySdk = "io.opentelemetry"            % "opentelemetry-sdk"             % Versions.openTelemetry
   lazy val openTelemetryOtlpExporter = "io.opentelemetry"   % "opentelemetry-exporter-otlp"   % Versions.openTelemetry
   lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetry

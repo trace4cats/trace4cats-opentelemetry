@@ -4,7 +4,6 @@ import cats.Foldable
 import cats.syntax.foldable._
 import cats.syntax.show._
 import io.circe.generic.semiauto._
-import io.circe.syntax._
 import io.circe.{Encoder, Json}
 import io.janstenpickle.trace4cats.model.SpanStatus.Internal
 import io.janstenpickle.trace4cats.model.{AttributeValue, Batch, CompletedSpan, SpanKind}
@@ -86,9 +85,7 @@ object ResourceSpansBatch {
   implicit val resourceSpansBatchEncoder: Encoder.AsObject[ResourceSpansBatch] = deriveEncoder
 }
 
-case class ResourceSpansBatch(resource_spans: List[ResourceSpans]) {
-  def toJson: Json = this.asJson
-}
+case class ResourceSpansBatch(resource_spans: List[ResourceSpans])
 
 case class ResourceSpans(
   resource: Resource,
