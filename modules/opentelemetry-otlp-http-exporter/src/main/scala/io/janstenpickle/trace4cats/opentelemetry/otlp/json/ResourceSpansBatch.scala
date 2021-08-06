@@ -87,11 +87,7 @@ object ResourceSpansBatch {
 
 case class ResourceSpansBatch(resource_spans: List[ResourceSpans])
 
-case class ResourceSpans(
-  resource: Resource,
-  instrumentation_library_spans: List[InstrumentationLibrarySpans],
-  schema_url: String = ""
-)
+case class ResourceSpans(resource: Resource, instrumentation_library_spans: List[InstrumentationLibrarySpans])
 object ResourceSpans {
   implicit val resourceSpansEncoder: Encoder.AsObject[ResourceSpans] = deriveEncoder
 }
@@ -101,11 +97,7 @@ object Resource {
   implicit val resourceEncoder: Encoder.AsObject[Resource] = deriveEncoder
 }
 
-case class InstrumentationLibrarySpans(
-  instrumentation_library: InstrumentationLibrary,
-  spans: List[Span],
-  schema_url: String = ""
-)
+case class InstrumentationLibrarySpans(instrumentation_library: InstrumentationLibrary, spans: List[Span])
 object InstrumentationLibrarySpans {
   implicit val instrumentationLibrarySpansEncoder: Encoder.AsObject[InstrumentationLibrarySpans] = deriveEncoder
 }
