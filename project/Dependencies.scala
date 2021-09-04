@@ -16,7 +16,7 @@ object Dependencies {
     val http4s = "0.23.3"
     val openTelemetry = "1.5.0"
 
-    val kindProjector = "0.13.1"
+    val kindProjector = "0.13.2"
     val betterMonadicFor = "0.3.1"
   }
 
