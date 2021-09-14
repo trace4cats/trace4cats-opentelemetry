@@ -35,7 +35,7 @@ class OpenTelemetryOtlpGrpcSpanCompleterSpec extends BaseJaegerSpec {
         batch,
         TraceProcess(serviceName),
         SemanticTags.kindTags,
-        SemanticTags.statusTags("", statusCode, requireMessage = false),
+        statusTags,
         processTags,
         additionalTags
       )
