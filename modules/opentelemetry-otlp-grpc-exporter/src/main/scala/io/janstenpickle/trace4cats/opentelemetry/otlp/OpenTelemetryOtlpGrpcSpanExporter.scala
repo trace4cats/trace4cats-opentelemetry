@@ -9,7 +9,7 @@ import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 object OpenTelemetryOtlpGrpcSpanExporter {
   def apply[F[_]: Async, G[_]: Foldable](
     host: String = "localhost",
-    port: Int = 55680
+    port: Int = 4317
   ): Resource[F, SpanExporter[F, G]] =
     OpenTelemetryGrpcSpanExporter(host, port, channel => OtlpGrpcSpanExporter.builder().setChannel(channel).build())
 }

@@ -17,7 +17,7 @@ object OpenTelemetryOtlpHttpSpanCompleter {
   def blazeClient[F[_]: Async](
     process: TraceProcess,
     host: String = "localhost",
-    port: Int = 55681,
+    port: Int = 4318,
     config: CompleterConfig = CompleterConfig(),
     ec: Option[ExecutionContext] = None
   ): Resource[F, SpanCompleter[F]] = for {
@@ -30,7 +30,7 @@ object OpenTelemetryOtlpHttpSpanCompleter {
     client: Client[F],
     process: TraceProcess,
     host: String = "localhost",
-    port: Int = 55681,
+    port: Int = 4318,
     config: CompleterConfig = CompleterConfig()
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>

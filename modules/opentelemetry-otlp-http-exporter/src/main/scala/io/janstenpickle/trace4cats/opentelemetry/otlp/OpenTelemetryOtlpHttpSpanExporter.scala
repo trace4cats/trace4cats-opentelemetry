@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext
 object OpenTelemetryOtlpHttpSpanExporter {
   def blazeClient[F[_]: Async, G[_]: Foldable](
     host: String = "localhost",
-    port: Int = 55681,
+    port: Int = 4318,
     ec: Option[ExecutionContext] = None
   ): Resource[F, SpanExporter[F, G]] = for {
     ec <- Resource.eval(ec.fold(Async[F].executionContext)(_.pure))
@@ -27,7 +27,7 @@ object OpenTelemetryOtlpHttpSpanExporter {
   def apply[F[_]: Temporal, G[_]: Foldable](
     client: Client[F],
     host: String = "localhost",
-    port: Int = 55681
+    port: Int = 4318
   ): F[SpanExporter[F, G]] =
     HttpSpanExporter[F, G, ResourceSpansBatch](
       client,

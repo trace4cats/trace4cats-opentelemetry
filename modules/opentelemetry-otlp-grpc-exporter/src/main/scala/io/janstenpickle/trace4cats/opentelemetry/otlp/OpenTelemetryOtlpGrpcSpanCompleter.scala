@@ -12,7 +12,7 @@ object OpenTelemetryOtlpGrpcSpanCompleter {
   def apply[F[_]: Async](
     process: TraceProcess,
     host: String = "localhost",
-    port: Int = 55680,
+    port: Int = 4317,
     config: CompleterConfig = CompleterConfig()
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
