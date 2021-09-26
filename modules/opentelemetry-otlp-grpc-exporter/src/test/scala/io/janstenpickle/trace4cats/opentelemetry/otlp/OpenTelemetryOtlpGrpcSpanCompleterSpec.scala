@@ -26,7 +26,7 @@ class OpenTelemetryOtlpGrpcSpanCompleterSpec extends BaseJaegerSpec {
       OpenTelemetryOtlpGrpcSpanCompleter[IO](
         process,
         "localhost",
-        55680,
+        4317,
         config = CompleterConfig(batchTimeout = 50.millis)
       ),
       updatedSpan,

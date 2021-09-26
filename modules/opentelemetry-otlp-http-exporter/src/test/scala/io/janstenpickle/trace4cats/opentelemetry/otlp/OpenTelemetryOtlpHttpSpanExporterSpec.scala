@@ -26,7 +26,7 @@ class OpenTelemetryOtlpHttpSpanExporterSpec extends BaseJaegerSpec {
       )
 
     testExporter(
-      OpenTelemetryOtlpHttpSpanExporter.blazeClient[IO, Chunk]("localhost", 55681),
+      OpenTelemetryOtlpHttpSpanExporter.blazeClient[IO, Chunk]("localhost", 4318),
       updatedBatch,
       batchToJaegerResponse(updatedBatch, process, SemanticTags.kindTags, statusTags, processTags, additionalTags)
     )
