@@ -20,7 +20,8 @@ exporters:
     logLevel: debug
   jaeger:
     endpoint: jaeger:14250
-    insecure: true
+    tls:
+      insecure: true
 
 service:
 
