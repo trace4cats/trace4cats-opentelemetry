@@ -4,7 +4,7 @@ object transport {
   sealed trait GrpcTransportType
   object GrpcTransportType {
     object Plaintext extends GrpcTransportType
-    object SSL extends GrpcTransportType
+    object Secure extends GrpcTransportType
 
     val Default = Plaintext
   }

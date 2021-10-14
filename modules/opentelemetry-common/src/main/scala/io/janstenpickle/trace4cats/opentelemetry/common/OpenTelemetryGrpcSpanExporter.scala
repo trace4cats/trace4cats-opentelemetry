@@ -60,7 +60,7 @@ object OpenTelemetryGrpcSpanExporter {
 
     val channelBuilderWithTransport = transportType match {
       case GrpcTransportType.Plaintext => channelBuilder.usePlaintext()
-      case GrpcTransportType.SSL => channelBuilder.useTransportSecurity()
+      case GrpcTransportType.Secure => channelBuilder.useTransportSecurity()
     }
 
     for {
