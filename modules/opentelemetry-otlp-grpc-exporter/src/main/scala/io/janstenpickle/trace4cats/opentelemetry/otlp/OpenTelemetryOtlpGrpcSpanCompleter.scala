@@ -8,7 +8,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import io.janstenpickle.trace4cats.`export`.{CompleterConfig, QueuedSpanCompleter}
 import io.janstenpickle.trace4cats.kernel.SpanCompleter
 import io.janstenpickle.trace4cats.model.TraceProcess
-import io.janstenpickle.trace4cats.opentelemetry.common.model.GrpcTransportType
+import io.janstenpickle.trace4cats.opentelemetry.common.transport.GrpcTransportType
 
 object OpenTelemetryOtlpGrpcSpanCompleter {
   def apply[F[_]: Async](

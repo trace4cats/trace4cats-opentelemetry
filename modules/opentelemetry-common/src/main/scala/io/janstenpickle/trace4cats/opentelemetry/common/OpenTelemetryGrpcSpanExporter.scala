@@ -9,7 +9,7 @@ import io.grpc.stub.MetadataUtils
 import io.grpc.{ManagedChannel, ManagedChannelBuilder, Metadata}
 import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan}
-import io.janstenpickle.trace4cats.opentelemetry.common.model.GrpcTransportType
+import io.janstenpickle.trace4cats.opentelemetry.common.transport.GrpcTransportType
 import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.`export`.{SpanExporter => OTSpanExporter}
