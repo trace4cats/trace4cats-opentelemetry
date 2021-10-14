@@ -17,21 +17,23 @@ object OpenTelemetryOtlpHttpSpanExporter {
   def blazeClient[F[_]: Async, G[_]: Foldable](
     host: String = "localhost",
     port: Int = 4318,
-    ec: Option[ExecutionContext] = None
+    ec: Option[ExecutionContext] = None,
+    protocol: String = "http"
   ): Resource[F, SpanExporter[F, G]] = for {
     ec <- Resource.eval(ec.fold(Async[F].executionContext)(_.pure))
     client <- BlazeClientBuilder[F](ec).resource
-    exporter <- Resource.eval(apply[F, G](client, host, port))
+    exporter <- Resource.eval(apply[F, G](client, host, port, protocol))
   } yield exporter
 
   def apply[F[_]: Temporal, G[_]: Foldable](
     client: Client[F],
     host: String = "localhost",
-    port: Int = 4318
+    port: Int = 4318,
+    protocol: String = "http"
   ): F[SpanExporter[F, G]] =
     HttpSpanExporter[F, G, ResourceSpansBatch](
       client,
-      s"http://$host:$port/v1/trace",
+      s"$protocol://$host:$port/v1/traces",
       (batch: Batch[G]) => ResourceSpansBatch.from(batch)
     )
 }
