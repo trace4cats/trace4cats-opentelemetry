@@ -49,6 +49,7 @@ lazy val `opentelemetry-common` =
         Dependencies.openTelemetrySdk,
         Dependencies.collectionCompat,
         Dependencies.grpcApi,
+        Dependencies.grpcStub,
         Dependencies.trace4catsModel,
         Dependencies.trace4catsKernel,
         Dependencies.trace4catsExporterCommon
