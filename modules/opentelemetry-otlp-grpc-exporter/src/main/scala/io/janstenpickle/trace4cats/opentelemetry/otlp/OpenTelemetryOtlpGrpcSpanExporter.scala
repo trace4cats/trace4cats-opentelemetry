@@ -5,7 +5,7 @@ import cats.effect.kernel.{Async, Resource}
 import io.grpc.Metadata
 import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.opentelemetry.common.OpenTelemetryGrpcSpanExporter
-import io.janstenpickle.trace4cats.opentelemetry.common.model.GrpcTransportType
+import io.janstenpickle.trace4cats.opentelemetry.common.transport.GrpcTransportType
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 
 object OpenTelemetryOtlpGrpcSpanExporter {

@@ -1,6 +1,6 @@
 package io.janstenpickle.trace4cats.opentelemetry.common
 
-object model {
+object transport {
   sealed trait GrpcTransportType
   object GrpcTransportType {
     object Plaintext extends GrpcTransportType
