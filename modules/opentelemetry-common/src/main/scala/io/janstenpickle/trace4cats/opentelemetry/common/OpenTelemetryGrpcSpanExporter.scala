@@ -5,9 +5,11 @@ import cats.effect.kernel.{Async, Resource, Sync}
 import cats.syntax.flatMap._
 import cats.syntax.foldable._
 import cats.syntax.functor._
-import io.grpc.{ManagedChannel, ManagedChannelBuilder}
+import io.grpc.stub.MetadataUtils
+import io.grpc.{ManagedChannel, ManagedChannelBuilder, Metadata}
 import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan}
+import io.janstenpickle.trace4cats.opentelemetry.common.model.GrpcTransportType
 import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.`export`.{SpanExporter => OTSpanExporter}
@@ -26,7 +28,9 @@ object OpenTelemetryGrpcSpanExporter {
   def apply[F[_]: Async, G[_]: Foldable](
     host: String,
     port: Int,
-    makeExporter: ManagedChannel => OTSpanExporter
+    makeExporter: ManagedChannel => OTSpanExporter,
+    transportType: GrpcTransportType = GrpcTransportType.Default,
+    staticHeaders: Metadata = new Metadata(),
   ): Resource[F, SpanExporter[F, G]] = {
     def liftCompletableResultCode(fa: F[CompletableResultCode])(onFailure: => Throwable): F[Unit] =
       fa.flatMap { result =>
@@ -38,7 +42,7 @@ object OpenTelemetryGrpcSpanExporter {
         }
       }
 
-    def write(exporter: OTSpanExporter, spans: G[CompletedSpan]): F[Unit] = {
+    def write(exporter: OTSpanExporter, spans: G[CompletedSpan]): F[Unit] =
       for {
         spans <- Sync[F].delay(
           spans
@@ -49,12 +53,20 @@ object OpenTelemetryGrpcSpanExporter {
         )
         _ <- liftCompletableResultCode(Sync[F].delay(exporter.`export`(spans)))(ExportFailure(host, port))
       } yield ()
+
+    val attachHeadersInterceptor = MetadataUtils.newAttachHeadersInterceptor(staticHeaders)
+
+    val channelBuilder = ManagedChannelBuilder.forAddress(host, port).intercept(attachHeadersInterceptor)
+
+    val channelBuilderWithTransport = transportType match {
+      case GrpcTransportType.Plaintext => channelBuilder.usePlaintext()
+      case GrpcTransportType.SSL => channelBuilder.useTransportSecurity()
     }
 
     for {
-      channel <- Resource.make[F, ManagedChannel](
-        Sync[F].delay(ManagedChannelBuilder.forAddress(host, port).usePlaintext().build())
-      )(channel => Sync[F].delay(channel.shutdown()).void)
+      channel <- Resource.make[F, ManagedChannel](Sync[F].delay(channelBuilderWithTransport.build()))(channel =>
+        Sync[F].delay(channel.shutdown()).void
+      )
       exporter <- Resource.make(Sync[F].delay(makeExporter(channel)))(exporter =>
         liftCompletableResultCode(Sync[F].delay(exporter.shutdown()))(ShutdownFailure(host, port))
       )

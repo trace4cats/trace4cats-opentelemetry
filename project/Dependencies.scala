@@ -31,6 +31,7 @@ object Dependencies {
   lazy val collectionCompat = "org.scala-lang.modules"   %% "scala-collection-compat"     % Versions.collectionCompat
   lazy val grpcApi = "io.grpc"                            % "grpc-api"                    % Versions.grpc
   lazy val grpcOkHttp = "io.grpc"                         % "grpc-okhttp"                 % Versions.grpc
+  lazy val grpcStub = "io.grpc"                           % "grpc-stub"                   % Versions.grpc
   lazy val http4sBlazeClient = "org.http4s"              %% "http4s-blaze-client"         % Versions.http4s
   lazy val http4sCirce = "org.http4s"                    %% "http4s-circe"                % Versions.http4s
   lazy val openTelemetrySdk = "io.opentelemetry"          % "opentelemetry-sdk"           % Versions.openTelemetry
