@@ -54,7 +54,7 @@ object OpenTelemetryGrpcSpanExporter {
         _ <- liftCompletableResultCode(Sync[F].delay(exporter.`export`(spans)))(ExportFailure(host, port))
       } yield ()
 
-    val mkChannel: F[ManagedChannel] = Sync[F].delay {
+    val makeChannel: F[ManagedChannel] = Sync[F].delay {
       val attachHeadersInterceptor = MetadataUtils.newAttachHeadersInterceptor(staticHeaders)
       val channelBuilder = ManagedChannelBuilder.forAddress(host, port).intercept(attachHeadersInterceptor)
       val channelBuilderWithTransport = transportType match {
@@ -65,7 +65,7 @@ object OpenTelemetryGrpcSpanExporter {
     }
 
     for {
-      channel <- Resource.make[F, ManagedChannel](mkChannel)(channel => Sync[F].delay(channel.shutdown()).void)
+      channel <- Resource.make[F, ManagedChannel](makeChannel)(channel => Sync[F].delay(channel.shutdown()).void)
       exporter <- Resource.make(Sync[F].delay(makeExporter(channel)))(exporter =>
         liftCompletableResultCode(Sync[F].delay(exporter.shutdown()))(ShutdownFailure(host, port))
       )
