@@ -7,8 +7,8 @@ object Dependencies {
     val scala3 = "3.1.0"
 
     val trace4cats = "0.12.0"
-    val trace4catsExporterHttp = "0.12.0"
-    val trace4catsJaegerIntegrationTest = "0.12.0"
+    val trace4catsExporterHttp = "0.12.0+41-8ce63144"
+    val trace4catsJaegerIntegrationTest = "0.12.0+42-5e4d5380"
 
     val circe = "0.14.1"
     val collectionCompat = "2.6.0"
@@ -32,7 +32,6 @@ object Dependencies {
   lazy val grpcApi = "io.grpc"                            % "grpc-api"                    % Versions.grpc
   lazy val grpcOkHttp = "io.grpc"                         % "grpc-okhttp"                 % Versions.grpc
   lazy val grpcStub = "io.grpc"                           % "grpc-stub"                   % Versions.grpc
-  lazy val http4sBlazeClient = "org.http4s"              %% "http4s-blaze-client"         % Versions.http4s
   lazy val http4sCirce = "org.http4s"                    %% "http4s-circe"                % Versions.http4s
   lazy val openTelemetrySdk = "io.opentelemetry"          % "opentelemetry-sdk"           % Versions.openTelemetry
   lazy val openTelemetryOtlpExporter = "io.opentelemetry" % "opentelemetry-exporter-otlp" % Versions.openTelemetry

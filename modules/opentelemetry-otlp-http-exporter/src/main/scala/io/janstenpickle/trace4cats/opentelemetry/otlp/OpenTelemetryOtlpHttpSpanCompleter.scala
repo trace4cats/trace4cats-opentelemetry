@@ -2,38 +2,37 @@ package io.janstenpickle.trace4cats.opentelemetry.otlp
 
 import cats.effect.kernel.{Async, Resource}
 import fs2.Chunk
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import io.janstenpickle.trace4cats.`export`.{CompleterConfig, QueuedSpanCompleter}
 import io.janstenpickle.trace4cats.kernel.SpanCompleter
 import io.janstenpickle.trace4cats.model.TraceProcess
+import org.http4s.Uri
 import org.http4s.client.Client
-import org.http4s.blaze.client.BlazeClientBuilder
-
-import scala.concurrent.ExecutionContext
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 object OpenTelemetryOtlpHttpSpanCompleter {
-  def blazeClient[F[_]: Async](
-    process: TraceProcess,
-    host: String = "localhost",
-    port: Int = 4318,
-    config: CompleterConfig = CompleterConfig(),
-    ec: Option[ExecutionContext] = None
-  ): Resource[F, SpanCompleter[F]] = for {
-    client <- ec.fold(BlazeClientBuilder[F])(BlazeClientBuilder[F].withExecutionContext).resource
-    completer <- apply[F](client, process, host, port, config)
-  } yield completer
 
   def apply[F[_]: Async](
     client: Client[F],
     process: TraceProcess,
     host: String = "localhost",
     port: Int = 4318,
-    config: CompleterConfig = CompleterConfig()
+    config: CompleterConfig = CompleterConfig(),
+    protocol: String = "http"
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
       Resource
-        .eval(OpenTelemetryOtlpHttpSpanExporter[F, Chunk](client, host, port))
+        .eval(OpenTelemetryOtlpHttpSpanExporter[F, Chunk](client, host, port, protocol))
         .flatMap(QueuedSpanCompleter[F](process, _, config))
+    }
+
+  def apply[F[_]: Async](
+    client: Client[F],
+    process: TraceProcess,
+    uri: Uri,
+    config: CompleterConfig
+  ): Resource[F, SpanCompleter[F]] =
+    Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
+      QueuedSpanCompleter[F](process, OpenTelemetryOtlpHttpSpanExporter[F, Chunk](client, uri), config)
     }
 }

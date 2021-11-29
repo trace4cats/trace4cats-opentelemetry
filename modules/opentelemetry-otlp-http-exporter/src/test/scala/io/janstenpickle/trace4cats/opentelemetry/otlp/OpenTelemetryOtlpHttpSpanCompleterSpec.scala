@@ -1,12 +1,13 @@
 package io.janstenpickle.trace4cats.opentelemetry.otlp
 
-import java.time.Instant
 import cats.effect.IO
 import fs2.Chunk
 import io.janstenpickle.trace4cats.`export`.{CompleterConfig, SemanticTags}
 import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan, TraceProcess}
 import io.janstenpickle.trace4cats.test.jaeger.BaseJaegerSpec
+import org.http4s.blaze.client.BlazeClientBuilder
 
+import java.time.Instant
 import scala.concurrent.duration._
 
 class OpenTelemetryOtlpHttpSpanCompleterSpec extends BaseJaegerSpec {
@@ -21,10 +22,18 @@ class OpenTelemetryOtlpHttpSpanCompleterSpec extends BaseJaegerSpec {
       }
     )
     val batch = Batch(Chunk(updatedSpan.build(process)))
+    val completer = BlazeClientBuilder[IO].resource.flatMap { client =>
+      OpenTelemetryOtlpHttpSpanCompleter[IO](
+        client,
+        process,
+        "localhost",
+        4318,
+        config = CompleterConfig(batchTimeout = 50.millis)
+      )
+    }
 
     testCompleter(
-      OpenTelemetryOtlpHttpSpanCompleter
-        .blazeClient[IO](process, "localhost", 4318, config = CompleterConfig(batchTimeout = 50.millis)),
+      completer,
       updatedSpan,
       process,
       batchToJaegerResponse(batch, process, SemanticTags.kindTags, statusTags, processTags, additionalTags)

@@ -76,7 +76,6 @@ lazy val `opentelemetry-otlp-http-exporter` =
       name := "trace4cats-opentelemetry-otlp-http-exporter",
       libraryDependencies ++= Seq(
         Dependencies.circeGeneric,
-        Dependencies.http4sBlazeClient,
         Dependencies.http4sCirce,
         Dependencies.trace4catsModel,
         Dependencies.trace4catsKernel,
