@@ -19,9 +19,8 @@ object OpenTelemetryOtlpHttpSpanExporter {
     host: String = "localhost",
     port: Int = 4318,
     protocol: String = "http"
-  ): F[SpanExporter[F, G]] = Uri.fromString(s"$protocol://$host:$port/v1/traces").liftTo[F].map { uri =>
-    HttpSpanExporter[F, G, ResourceSpansBatch](client, uri, (batch: Batch[G]) => ResourceSpansBatch.from(batch))
-  }
+  ): F[SpanExporter[F, G]] =
+    Uri.fromString(s"$protocol://$host:$port/v1/traces").liftTo[F].map(uri => apply(client, uri))
 
   def apply[F[_]: Temporal, G[_]: Foldable](client: Client[F], uri: Uri): SpanExporter[F, G] =
     HttpSpanExporter[F, G, ResourceSpansBatch](client, uri, (batch: Batch[G]) => ResourceSpansBatch.from(batch))
