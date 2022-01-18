@@ -3,9 +3,9 @@ package io.janstenpickle.trace4cats.opentelemetry
 import io.janstenpickle.trace4cats.model.{AttributeValue, SpanStatus, TraceProcess}
 
 package object otlp {
-  val statusCode: SpanStatus => Int = {
-    case s if s.isOk => 1
-    case _ => 2
+  val statusCode: SpanStatus => String = {
+    case s if s.isOk => "OK"
+    case _ => "ERROR"
   }
 
   val statusTags: SpanStatus => Map[String, AttributeValue] = { s =>
