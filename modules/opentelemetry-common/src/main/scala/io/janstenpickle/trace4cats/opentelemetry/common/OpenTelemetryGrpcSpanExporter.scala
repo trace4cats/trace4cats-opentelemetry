@@ -5,32 +5,26 @@ import cats.effect.kernel.{Async, Resource, Sync}
 import cats.syntax.flatMap._
 import cats.syntax.foldable._
 import cats.syntax.functor._
-import io.grpc.stub.MetadataUtils
-import io.grpc.{ManagedChannel, ManagedChannelBuilder, Metadata}
 import io.janstenpickle.trace4cats.kernel.SpanExporter
 import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan}
-import io.janstenpickle.trace4cats.opentelemetry.common.transport.GrpcTransportType
 import io.opentelemetry.sdk.common.CompletableResultCode
-import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.`export`.{SpanExporter => OTSpanExporter}
+import io.opentelemetry.sdk.trace.data.SpanData
 
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 object OpenTelemetryGrpcSpanExporter {
-  case class ShutdownFailure(host: String, port: Int) extends RuntimeException {
-    override def getMessage: String = s"Failed to shutdown Open Telemetry span exporter for $host:$port"
+  final case class ShutdownFailure(endpoint: Endpoint) extends RuntimeException {
+    override def getMessage: String = s"Failed to shutdown OpenTelemetry span exporter for ${endpoint.render}"
   }
-  case class ExportFailure(host: String, port: Int) extends RuntimeException {
-    override def getMessage: String = s"Failed to export Open Telemetry span batch to $host:$port"
+  final case class ExportFailure(endpoint: Endpoint) extends RuntimeException {
+    override def getMessage: String = s"Failed to export OpenTelemetry span batch to ${endpoint.render}"
   }
 
   def apply[F[_]: Async, G[_]: Foldable](
-    host: String,
-    port: Int,
-    makeExporter: ManagedChannel => OTSpanExporter,
-    transportType: GrpcTransportType = GrpcTransportType.Default,
-    staticHeaders: Metadata = new Metadata(),
+    endpoint: Endpoint,
+    makeExporter: Endpoint => OTSpanExporter,
   ): Resource[F, SpanExporter[F, G]] = {
     def liftCompletableResultCode(fa: F[CompletableResultCode])(onFailure: => Throwable): F[Unit] =
       fa.flatMap { result =>
@@ -51,26 +45,13 @@ object OpenTelemetryGrpcSpanExporter {
             }
             .asJavaCollection
         )
-        _ <- liftCompletableResultCode(Sync[F].delay(exporter.`export`(spans)))(ExportFailure(host, port))
+        _ <- liftCompletableResultCode(Sync[F].delay(exporter.`export`(spans)))(ExportFailure(endpoint))
       } yield ()
 
-    val makeChannel: F[ManagedChannel] = Sync[F].delay {
-      val attachHeadersInterceptor = MetadataUtils.newAttachHeadersInterceptor(staticHeaders)
-      val channelBuilder = ManagedChannelBuilder.forAddress(host, port).intercept(attachHeadersInterceptor)
-      val channelBuilderWithTransport = transportType match {
-        case GrpcTransportType.Plaintext => channelBuilder.usePlaintext()
-        case GrpcTransportType.Secure => channelBuilder.useTransportSecurity()
-      }
-      channelBuilderWithTransport.build()
-    }
-
-    for {
-      channel <- Resource.make[F, ManagedChannel](makeChannel)(channel => Sync[F].delay(channel.shutdown()).void)
-      exporter <- Resource.make(Sync[F].delay(makeExporter(channel)))(exporter =>
-        liftCompletableResultCode(Sync[F].delay(exporter.shutdown()))(ShutdownFailure(host, port))
+    Resource
+      .make(Sync[F].delay(makeExporter(endpoint)))(exporter =>
+        liftCompletableResultCode(Sync[F].delay(exporter.shutdown()))(ShutdownFailure(endpoint))
       )
-    } yield new SpanExporter[F, G] {
-      override def exportBatch(batch: Batch[G]): F[Unit] = write(exporter, batch.spans)
-    }
+      .map(exporter => (batch: Batch[G]) => write(exporter, batch.spans))
   }
 }
