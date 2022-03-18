@@ -13,7 +13,7 @@ object Dependencies {
     val circe = "0.14.1"
     val collectionCompat = "2.6.0"
     val grpc = "1.44.1"
-    val http4s = "0.23.10"
+    val http4s = "0.23.11"
     val openTelemetry = "1.11.0"
 
     val kindProjector = "0.13.2"
