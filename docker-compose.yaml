@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   otelcol:
-    image: otel/opentelemetry-collector:0.45.0
+    image: otel/opentelemetry-collector:0.47.0
     ports:
       - "4317:4317"
       - "4318:4318"
@@ -14,7 +14,7 @@ services:
       - jaeger
 
   jaeger:
-    image: jaegertracing/all-in-one:1.31.0
+    image: jaegertracing/all-in-one:1.32.0
     ports:
       - "5775:5775/udp"
       - "6831:6831/udp"
