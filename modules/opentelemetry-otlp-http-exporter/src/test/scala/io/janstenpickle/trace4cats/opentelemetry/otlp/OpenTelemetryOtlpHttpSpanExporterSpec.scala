@@ -3,7 +3,7 @@ package io.janstenpickle.trace4cats.opentelemetry.otlp
 import cats.effect.{IO, Resource}
 import fs2.Chunk
 import io.janstenpickle.trace4cats.`export`.SemanticTags
-import io.janstenpickle.trace4cats.model.{Batch, TraceProcess}
+import io.janstenpickle.trace4cats.model.{Batch, TraceProcess, TraceState}
 import io.janstenpickle.trace4cats.test.jaeger.BaseJaegerSpec
 import org.http4s.blaze.client.BlazeClientBuilder
 
@@ -21,7 +21,8 @@ class OpenTelemetryOtlpHttpSpanExporterSpec extends BaseJaegerSpec {
                 excludedTagKeys.contains(key)
               },
             start = Instant.now(),
-            end = Instant.now()
+            end = Instant.now(),
+            context = span.context.copy(traceState = TraceState.empty)
           )
         )
       )

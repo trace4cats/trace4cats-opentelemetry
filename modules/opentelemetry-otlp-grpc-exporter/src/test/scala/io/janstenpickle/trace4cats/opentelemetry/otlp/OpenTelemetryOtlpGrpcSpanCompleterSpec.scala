@@ -4,7 +4,7 @@ import java.time.Instant
 import cats.effect.IO
 import fs2.Chunk
 import io.janstenpickle.trace4cats.`export`.{CompleterConfig, SemanticTags}
-import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan, TraceProcess}
+import io.janstenpickle.trace4cats.model.{Batch, CompletedSpan, TraceProcess, TraceState}
 import io.janstenpickle.trace4cats.test.jaeger.BaseJaegerSpec
 
 import scala.concurrent.duration._
@@ -18,7 +18,8 @@ class OpenTelemetryOtlpGrpcSpanCompleterSpec extends BaseJaegerSpec {
       end = Instant.now(),
       attributes = span.attributes.filterNot { case (key, _) =>
         excludedTagKeys.contains(key)
-      }
+      },
+      context = span.context.copy(traceState = TraceState.empty)
     )
     val batch = Batch(Chunk(updatedSpan.build(serviceName)))
 

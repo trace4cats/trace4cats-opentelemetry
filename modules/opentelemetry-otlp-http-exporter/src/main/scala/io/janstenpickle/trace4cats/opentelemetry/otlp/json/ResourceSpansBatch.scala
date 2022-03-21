@@ -34,6 +34,7 @@ object ResourceSpansBatch {
       Span(
         trace_id = span.context.traceId.value,
         span_id = span.context.spanId.value,
+        trace_state = span.context.traceState.values.map { case (k, v) => s"$k=$v" }.mkString(","),
         parent_span_id = span.context.parent.fold(Array.emptyByteArray)(_.spanId.value),
         name = span.name,
         kind = span.kind match {
