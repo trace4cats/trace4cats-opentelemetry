@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.IO
 import fs2.Chunk
 import io.janstenpickle.trace4cats.`export`.SemanticTags
-import io.janstenpickle.trace4cats.model.{Batch, TraceProcess}
+import io.janstenpickle.trace4cats.model.{Batch, TraceProcess, TraceState}
 import io.janstenpickle.trace4cats.test.jaeger.BaseJaegerSpec
 
 class OpenTelemetryOtlpGrpcSpanExporterSpec extends BaseJaegerSpec {
@@ -20,7 +20,8 @@ class OpenTelemetryOtlpGrpcSpanExporterSpec extends BaseJaegerSpec {
                 excludedTagKeys.contains(key)
               },
             start = Instant.now(),
-            end = Instant.now()
+            end = Instant.now(),
+            context = span.context.copy(traceState = TraceState.empty)
           )
         )
       )
