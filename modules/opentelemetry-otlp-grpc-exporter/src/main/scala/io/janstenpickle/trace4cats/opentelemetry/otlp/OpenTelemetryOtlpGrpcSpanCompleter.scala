@@ -14,10 +14,11 @@ object OpenTelemetryOtlpGrpcSpanCompleter {
     host: String = "localhost",
     port: Int = 4317,
     config: CompleterConfig = CompleterConfig(),
-    protocol: String = "http"
+    protocol: String = "http",
+    staticHeaders: Map[String, String] = Map.empty,
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
-      OpenTelemetryOtlpGrpcSpanExporter[F, Chunk](host, port, protocol)
+      OpenTelemetryOtlpGrpcSpanExporter[F, Chunk](host, port, protocol, staticHeaders)
         .flatMap(QueuedSpanCompleter[F](process, _, config))
     }
 }

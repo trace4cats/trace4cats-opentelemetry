@@ -10,10 +10,16 @@ object OpenTelemetryOtlpGrpcSpanExporter {
   def apply[F[_]: Async, G[_]: Foldable](
     host: String = "localhost",
     port: Int = 4317,
-    protocol: String = "http"
+    protocol: String = "http",
+    staticHeaders: Map[String, String] = Map.empty,
   ): Resource[F, SpanExporter[F, G]] =
     OpenTelemetryGrpcSpanExporter(
-      Endpoint(protocol, host, port),
-      ep => OtlpGrpcSpanExporter.builder().setEndpoint(ep.render).build()
+      endpoint = Endpoint(protocol, host, port),
+      makeExporter = endpoint =>
+        staticHeaders
+          .foldLeft(OtlpGrpcSpanExporter.builder().setEndpoint(endpoint.render)) { case (builder, (key, value)) =>
+            builder.addHeader(key, value)
+          }
+          .build(),
     )
 }
