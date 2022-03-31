@@ -6,9 +6,9 @@ object Dependencies {
     val scala213 = "2.13.8"
     val scala3 = "3.1.1"
 
-    val trace4cats = "0.13.0"
-    val trace4catsExporterHttp = "0.13.0"
-    val trace4catsJaegerIntegrationTest = "0.13.0"
+    val trace4cats = "0.13.1"
+    val trace4catsExporterHttp = "0.13.1"
+    val trace4catsJaegerIntegrationTest = "0.13.1"
 
     val circe = "0.14.1"
     val collectionCompat = "2.7.0"
