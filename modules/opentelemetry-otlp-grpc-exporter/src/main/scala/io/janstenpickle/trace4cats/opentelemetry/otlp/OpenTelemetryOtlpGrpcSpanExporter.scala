@@ -12,7 +12,7 @@ object OpenTelemetryOtlpGrpcSpanExporter {
     host: String = "localhost",
     port: Int = 4317,
     protocol: String = "http",
-    staticHeaders: Map[CIString, String] = Map.empty,
+    staticHeaders: List[(CIString, String)] = List.empty
   ): Resource[F, SpanExporter[F, G]] =
     OpenTelemetryGrpcSpanExporter(
       endpoint = Endpoint(protocol, host, port),

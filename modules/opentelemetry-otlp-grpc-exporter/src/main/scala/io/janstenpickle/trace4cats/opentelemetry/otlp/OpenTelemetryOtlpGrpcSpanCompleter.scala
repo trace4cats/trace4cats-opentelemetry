@@ -16,7 +16,7 @@ object OpenTelemetryOtlpGrpcSpanCompleter {
     port: Int = 4317,
     config: CompleterConfig = CompleterConfig(),
     protocol: String = "http",
-    staticHeaders: Map[CIString, String] = Map.empty,
+    staticHeaders: List[(CIString, String)] = List.empty
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
       OpenTelemetryOtlpGrpcSpanExporter[F, Chunk](host, port, protocol, staticHeaders)
