@@ -7,11 +7,12 @@ import io.janstenpickle.trace4cats.model.SpanStatus._
 import io.janstenpickle.trace4cats.model.TraceState.{Key, Value}
 import io.janstenpickle.trace4cats.model.{CompletedSpan, SampleDecision, SpanKind}
 import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.sdk.common.InstrumentationLibraryInfo
+import io.opentelemetry.sdk.common.{InstrumentationLibraryInfo, InstrumentationScopeInfo}
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.data.{EventData, LinkData, SpanData, StatusData}
 import io.opentelemetry.api.trace.{SpanKind => OtelSpanKind, _}
 
+import scala.annotation.nowarn
 import scala.jdk.CollectionConverters._
 
 object Trace4CatsSpanData {
@@ -42,8 +43,12 @@ object Trace4CatsSpanData {
 
       override def getResource: Resource = resource
 
+      @nowarn("cat=deprecation")
       override lazy val getInstrumentationLibraryInfo: InstrumentationLibraryInfo =
         InstrumentationLibraryInfo.create("trace4cats", null)
+
+      override lazy val getInstrumentationScopeInfo: InstrumentationScopeInfo =
+        InstrumentationScopeInfo.create("trace4cats")
 
       override def getName: String = span.name
 
