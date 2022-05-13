@@ -60,7 +60,7 @@ object Trace4CatsAttributes {
       }
 
       override def asMap: util.Map[AttributeKey[_], AnyRef] = {
-        val data = new util.HashMap[AttributeKey[_], AnyRef]()
+        val data = new util.HashMap[AttributeKey[_], AnyRef]
         forEach { (k, a) =>
           val _ = data.put(k, a)
         }
