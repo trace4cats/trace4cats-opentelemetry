@@ -14,7 +14,7 @@ services:
       - jaeger
 
   jaeger:
-    image: jaegertracing/all-in-one:1.34.0
+    image: jaegertracing/all-in-one:1.34.1
     ports:
       - "5775:5775/udp"
       - "6831:6831/udp"
