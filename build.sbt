@@ -48,9 +48,7 @@ lazy val `opentelemetry-common` =
         Dependencies.collectionCompat,
         Dependencies.grpcApi,
         Dependencies.grpcStub,
-        Dependencies.trace4catsModel,
-        Dependencies.trace4catsKernel,
-        Dependencies.trace4catsExporterCommon,
+        Dependencies.trace4catsCore,
         Dependencies.autoValueAnnotation % Provided
       )
     )
@@ -83,9 +81,7 @@ lazy val `opentelemetry-otlp-http-exporter` =
       libraryDependencies ++= Seq(
         Dependencies.circeGeneric,
         Dependencies.http4sCirce,
-        Dependencies.trace4catsModel,
-        Dependencies.trace4catsKernel,
-        Dependencies.trace4catsExporterCommon,
+        Dependencies.trace4catsCore,
         Dependencies.trace4catsExporterHttp
       ),
       libraryDependencies ++= Seq(Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test)
