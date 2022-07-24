@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val scala212 = "2.12.15"
+    val scala212 = "2.12.16"
     val scala213 = "2.13.8"
     val scala3 = "3.1.2"
 
@@ -13,9 +13,9 @@ object Dependencies {
     val autoValue = "1.9"
     val circe = "0.14.2"
     val collectionCompat = "2.8.0"
-    val grpc = "1.46.0"
+    val grpc = "1.48.0"
     val http4s = "0.23.12"
-    val openTelemetry = "1.14.0"
+    val openTelemetry = "1.16.0"
 
     val kindProjector = "0.13.2"
     val betterMonadicFor = "0.3.1"
