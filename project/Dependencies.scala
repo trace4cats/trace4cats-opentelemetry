@@ -7,14 +7,14 @@ object Dependencies {
     val scala3 = "3.1.3"
 
     val trace4cats = "0.13.1+114-c5a4b269"
-    val trace4catsExporterHttp = "0.13.1+14-639b5d65"
-    val trace4catsJaegerIntegrationTest = "0.13.1+17-8394f0da"
+    val trace4catsExporterHttp = "0.13.1+26-3c5516ed"
+    val trace4catsJaegerIntegrationTest = "0.13.1+34-81de7eab"
 
     val autoValue = "1.9"
     val circe = "0.14.2"
-    val collectionCompat = "2.8.0"
+    val collectionCompat = "2.8.1"
     val grpc = "1.48.0"
-    val http4s = "0.23.13"
+    val http4s = "0.23.14"
     val openTelemetry = "1.16.0"
 
     val kindProjector = "0.13.2"
