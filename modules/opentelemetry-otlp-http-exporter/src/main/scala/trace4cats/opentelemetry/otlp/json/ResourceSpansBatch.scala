@@ -72,12 +72,7 @@ object ResourceSpansBatch {
         .map { case (service, spans) =>
           ResourceSpans(
             resource = Resource(attributes = List(KeyValue("service.name", AnyValue.stringValue(service)))),
-            instrumentation_library_spans = List(
-              InstrumentationLibrarySpans(
-                instrumentation_library = InstrumentationLibrary("trace4cats"),
-                spans = spans.toList
-              )
-            )
+            scope_spans = List(ScopeSpans(scope = InstrumentationScope("trace4cats"), spans = spans.toList))
           )
         }
         .toList
@@ -89,7 +84,7 @@ object ResourceSpansBatch {
 
 case class ResourceSpansBatch(resource_spans: List[ResourceSpans])
 
-case class ResourceSpans(resource: Resource, instrumentation_library_spans: List[InstrumentationLibrarySpans])
+case class ResourceSpans(resource: Resource, scope_spans: List[ScopeSpans])
 object ResourceSpans {
   implicit val resourceSpansEncoder: Encoder.AsObject[ResourceSpans] = deriveEncoder
 }
@@ -99,14 +94,19 @@ object Resource {
   implicit val resourceEncoder: Encoder.AsObject[Resource] = deriveEncoder
 }
 
-case class InstrumentationLibrarySpans(instrumentation_library: InstrumentationLibrary, spans: List[Span])
-object InstrumentationLibrarySpans {
-  implicit val instrumentationLibrarySpansEncoder: Encoder.AsObject[InstrumentationLibrarySpans] = deriveEncoder
+case class ScopeSpans(scope: InstrumentationScope, spans: List[Span])
+object ScopeSpans {
+  implicit val scopeSpansEncoder: Encoder.AsObject[ScopeSpans] = deriveEncoder
 }
 
-case class InstrumentationLibrary(name: String, version: String = "")
-object InstrumentationLibrary {
-  implicit val instrumentationLibraryEncoder: Encoder.AsObject[InstrumentationLibrary] = deriveEncoder
+case class InstrumentationScope(
+  name: String,
+  version: String = "",
+  attributes: List[KeyValue] = Nil,
+  dropped_attributes_count: Int = 0
+)
+object InstrumentationScope {
+  implicit val instrumentationScopeEncoder: Encoder.AsObject[InstrumentationScope] = deriveEncoder
 }
 
 case class Status(message: String, code: Status.Code)
