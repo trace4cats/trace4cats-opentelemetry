@@ -12,7 +12,7 @@ object Dependencies {
 
     val autoValue = "1.9"
     val circe = "0.14.2"
-    val collectionCompat = "2.8.1"
+    val collectionCompat = "2.11.0"
     val grpc = "1.48.2"
     val http4s = "0.23.14"
     val openTelemetry = "1.16.0"
