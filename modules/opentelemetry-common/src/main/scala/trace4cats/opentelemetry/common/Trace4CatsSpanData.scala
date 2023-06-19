@@ -2,7 +2,6 @@ package trace4cats.opentelemetry.common
 
 import java.util
 import java.util.concurrent.TimeUnit
-
 import cats.syntax.show._
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.{SpanKind => OtelSpanKind, _}
@@ -13,6 +12,8 @@ import trace4cats.model.SpanStatus._
 import trace4cats.model.TraceState.{Key, Value}
 import trace4cats.model.{CompletedSpan, SampleDecision, SpanKind}
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import scala.annotation.nowarn
 import scala.jdk.CollectionConverters._
 
@@ -62,7 +63,7 @@ object Trace4CatsSpanData {
           case SpanKind.Consumer => OtelSpanKind.CONSUMER
         }
 
-      override lazy val getStartEpochNanos: Long = TimeUnit.MILLISECONDS.toNanos(span.start.toEpochMilli)
+      override lazy val getStartEpochNanos: Long = ChronoUnit.NANOS.between(Instant.EPOCH, span.start)
 
       override val getAttributes: Attributes = Trace4CatsAttributes(span.allAttributes)
 
@@ -84,7 +85,7 @@ object Trace4CatsSpanData {
           case _ => StatusData.error()
         }
 
-      override lazy val getEndEpochNanos: Long = TimeUnit.MILLISECONDS.toNanos(span.end.toEpochMilli)
+      override lazy val getEndEpochNanos: Long = ChronoUnit.NANOS.between(Instant.EPOCH, span.end)
 
       override lazy val getParentSpanContext: SpanContext =
         span.context.parent.fold(SpanContext.getInvalid) { p =>
