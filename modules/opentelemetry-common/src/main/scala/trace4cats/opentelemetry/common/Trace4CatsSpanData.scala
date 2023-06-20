@@ -1,7 +1,6 @@
 package trace4cats.opentelemetry.common
 
 import java.util
-import java.util.concurrent.TimeUnit
 import cats.syntax.show._
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.{SpanKind => OtelSpanKind, _}
