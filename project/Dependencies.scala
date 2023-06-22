@@ -4,18 +4,18 @@ object Dependencies {
   object Versions {
     val scala212 = "2.12.16"
     val scala213 = "2.13.8"
-    val scala3 = "3.1.3"
+    val scala3 = "3.3.0"
 
     val trace4cats = "0.14.0"
     val trace4catsExporterHttp = "0.14.0"
     val trace4catsJaegerIntegrationTest = "0.14.0"
 
-    val autoValue = "1.9"
+    val autoValue = "1.10.1"
     val circe = "0.14.2"
     val collectionCompat = "2.11.0"
-    val grpc = "1.48.2"
+    val grpc = "1.49.0"
     val http4s = "0.23.14"
-    val openTelemetry = "1.16.0"
+    val openTelemetry = "1.27.0"
 
     val kindProjector = "0.13.2"
     val betterMonadicFor = "0.3.1"
