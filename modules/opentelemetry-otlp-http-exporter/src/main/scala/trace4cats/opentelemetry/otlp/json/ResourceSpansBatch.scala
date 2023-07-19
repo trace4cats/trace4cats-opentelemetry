@@ -1,6 +1,7 @@
 package trace4cats.opentelemetry.otlp.json
 
-import java.util.concurrent.TimeUnit
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 import cats.Foldable
 import cats.syntax.foldable._
@@ -45,8 +46,8 @@ object ResourceSpansBatch {
           case SpanKind.Producer => SPAN_KIND_PRODUCER
           case SpanKind.Consumer => SPAN_KIND_CONSUMER
         },
-        start_time_unix_nano = TimeUnit.MILLISECONDS.toNanos(span.start.toEpochMilli),
-        end_time_unix_nano = TimeUnit.MILLISECONDS.toNanos(span.end.toEpochMilli),
+        start_time_unix_nano = ChronoUnit.NANOS.between(Instant.EPOCH, span.start),
+        end_time_unix_nano = ChronoUnit.NANOS.between(Instant.EPOCH, span.end),
         attributes = toAttributes(span.allAttributes),
         status = Status(
           code = span.status match {
