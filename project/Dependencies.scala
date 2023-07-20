@@ -6,15 +6,15 @@ object Dependencies {
     val scala213 = "2.13.8"
     val scala3 = "3.3.0"
 
-    val trace4cats = "0.14.0"
+    val trace4cats = "0.14.4"
     val trace4catsExporterHttp = "0.14.0"
-    val trace4catsJaegerIntegrationTest = "0.14.0"
+    val trace4catsJaegerIntegrationTest = "0.14.2"
 
     val autoValue = "1.10.2"
     val circe = "0.14.5"
     val collectionCompat = "2.11.0"
     val grpc = "1.49.2"
-    val http4s = "0.23.21"
+    val http4s = "0.23.22"
     val openTelemetry = "1.27.0"
 
     val kindProjector = "0.13.2"
