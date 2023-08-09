@@ -1,8 +1,5 @@
 package trace4cats.opentelemetry.otlp.json
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-
 import cats.Foldable
 import cats.syntax.foldable._
 import cats.syntax.show._
@@ -14,6 +11,8 @@ import trace4cats.model.{AttributeValue, Batch, CompletedSpan, SpanKind}
 import trace4cats.opentelemetry.otlp.json.Span.SpanKind._
 import trace4cats.opentelemetry.otlp.json.Status.Code._
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import scala.collection.mutable.{ListBuffer, Map => MutMap}
 
 object ResourceSpansBatch {
@@ -34,10 +33,10 @@ object ResourceSpansBatch {
 
     def toSpan(span: CompletedSpan): Span =
       Span(
-        trace_id = span.context.traceId.value,
-        span_id = span.context.spanId.value,
-        trace_state = span.context.traceState.values.map { case (k, v) => s"$k=$v" }.mkString(","),
-        parent_span_id = span.context.parent.fold(Array.emptyByteArray)(_.spanId.value),
+        traceId = span.context.traceId.value,
+        spanId = span.context.spanId.value,
+        traceState = span.context.traceState.values.map { case (k, v) => s"$k=$v" }.mkString(","),
+        parentSpanId = span.context.parent.fold(Array.emptyByteArray)(_.spanId.value),
         name = span.name,
         kind = span.kind match {
           case SpanKind.Internal => SPAN_KIND_INTERNAL
@@ -46,8 +45,8 @@ object ResourceSpansBatch {
           case SpanKind.Producer => SPAN_KIND_PRODUCER
           case SpanKind.Consumer => SPAN_KIND_CONSUMER
         },
-        start_time_unix_nano = ChronoUnit.NANOS.between(Instant.EPOCH, span.start),
-        end_time_unix_nano = ChronoUnit.NANOS.between(Instant.EPOCH, span.end),
+        startTimeUnixNano = ChronoUnit.NANOS.between(Instant.EPOCH, span.start),
+        endTimeUnixNano = ChronoUnit.NANOS.between(Instant.EPOCH, span.end),
         attributes = toAttributes(span.allAttributes),
         status = Status(
           code = span.status match {
@@ -73,7 +72,7 @@ object ResourceSpansBatch {
         .map { case (service, spans) =>
           ResourceSpans(
             resource = Resource(attributes = List(KeyValue("service.name", AnyValue.stringValue(service)))),
-            scope_spans = List(ScopeSpans(scope = InstrumentationScope("trace4cats"), spans = spans.toList))
+            scopeSpans = List(ScopeSpans(scope = InstrumentationScope("trace4cats"), spans = spans.toList))
           )
         }
         .toList
@@ -83,14 +82,14 @@ object ResourceSpansBatch {
   implicit val resourceSpansBatchEncoder: Encoder.AsObject[ResourceSpansBatch] = deriveEncoder
 }
 
-case class ResourceSpansBatch(resource_spans: List[ResourceSpans])
+case class ResourceSpansBatch(resourceSpans: List[ResourceSpans])
 
-case class ResourceSpans(resource: Resource, scope_spans: List[ScopeSpans])
+case class ResourceSpans(resource: Resource, scopeSpans: List[ScopeSpans])
 object ResourceSpans {
   implicit val resourceSpansEncoder: Encoder.AsObject[ResourceSpans] = deriveEncoder
 }
 
-case class Resource(attributes: List[KeyValue], dropped_attributes_count: Int = 0)
+case class Resource(attributes: List[KeyValue], droppedAttributesCount: Int = 0)
 object Resource {
   implicit val resourceEncoder: Encoder.AsObject[Resource] = deriveEncoder
 }
@@ -104,7 +103,7 @@ case class InstrumentationScope(
   name: String,
   version: String = "",
   attributes: List[KeyValue] = Nil,
-  dropped_attributes_count: Int = 0
+  droppedAttributesCount: Int = 0
 )
 object InstrumentationScope {
   implicit val instrumentationScopeEncoder: Encoder.AsObject[InstrumentationScope] = deriveEncoder
@@ -124,20 +123,20 @@ object Status {
 }
 
 case class Span(
-  trace_id: Array[Byte],
-  span_id: Array[Byte],
-  trace_state: String = "",
-  parent_span_id: Array[Byte],
+  traceId: Array[Byte],
+  spanId: Array[Byte],
+  traceState: String = "",
+  parentSpanId: Array[Byte],
   name: String,
   kind: Span.SpanKind,
-  start_time_unix_nano: Long,
-  end_time_unix_nano: Long,
+  startTimeUnixNano: Long,
+  endTimeUnixNano: Long,
   attributes: List[KeyValue],
-  dropped_attributes_count: Int = 0,
+  droppedAttributesCount: Int = 0,
   events: List[Span.Event] = List.empty,
-  dropped_events_count: Int = 0,
+  droppedEventsCount: Int = 0,
   links: List[Span.Link],
-  dropped_links_count: Int = 0,
+  droppedLinksCount: Int = 0,
   status: Status
 )
 
@@ -157,17 +156,17 @@ object Span {
     case object SPAN_KIND_CONSUMER extends SpanKind(5)
   }
 
-  case class Event(time_unix_nano: Long, name: String, attributes: List[KeyValue], dropped_attributes_count: Int = 0)
+  case class Event(timeUnixNano: Long, name: String, attributes: List[KeyValue], droppedAttributesCount: Int = 0)
   object Event {
     implicit val eventEncoder: Encoder.AsObject[Event] = deriveEncoder
   }
 
   final case class Link(
-    trace_id: Array[Byte],
-    span_id: Array[Byte],
-    trace_state: String = "",
+    traceId: Array[Byte],
+    spanId: Array[Byte],
+    traceState: String = "",
     attributes: List[KeyValue] = List.empty,
-    dropped_attributes_count: Int = 0
+    droppedAttributesCount: Int = 0
   )
   object Link {
     implicit val linkEncoder: Encoder.AsObject[Link] = deriveEncoder
