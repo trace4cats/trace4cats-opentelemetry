@@ -17,7 +17,7 @@ object OpenTelemetryJaegerSpanCompleter {
     protocol: String = "http"
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
-      OpenTelemetryJaegerSpanExporter[F, Chunk](host, port, protocol)
-        .flatMap(QueuedSpanCompleter[F](process, _, config))
+      OpenTelemetryJaegerSpanExporter[F, Chunk](host, port, protocol, process.attributes)
+        .flatMap(QueuedSpanCompleter[F](TraceProcess(process.serviceName), _, config))
     }
 }

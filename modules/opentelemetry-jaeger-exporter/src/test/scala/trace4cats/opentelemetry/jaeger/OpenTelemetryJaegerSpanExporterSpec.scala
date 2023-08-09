@@ -14,7 +14,7 @@ class OpenTelemetryJaegerSpanExporterSpec extends BaseJaegerSpec {
         batch.spans.map(span =>
           span.copy(
             serviceName = process.serviceName,
-            attributes = (process.attributes ++ span.allAttributes)
+            attributes = span.allAttributes
               .filterNot { case (key, _) =>
                 excludedTagKeys.contains(key)
               },
@@ -25,7 +25,7 @@ class OpenTelemetryJaegerSpanExporterSpec extends BaseJaegerSpec {
       )
 
     testExporter(
-      OpenTelemetryJaegerSpanExporter[IO, Chunk]("localhost", 14250),
+      OpenTelemetryJaegerSpanExporter[IO, Chunk]("localhost", 14250, "http", process.attributes),
       updatedBatch,
       batchToJaegerResponse(updatedBatch, process, kindTags, statusTags, processTags, additionalTags)
     )
