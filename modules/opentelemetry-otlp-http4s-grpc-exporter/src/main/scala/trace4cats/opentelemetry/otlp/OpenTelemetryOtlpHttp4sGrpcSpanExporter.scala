@@ -3,7 +3,7 @@ package trace4cats.opentelemetry.otlp
 import cats.Foldable
 import cats.effect.kernel.Temporal
 import cats.syntax.all._
-import io.opentelemetry.proto.collector.trace.v1.service.TraceService
+import io.opentelemetry.proto.collector.trace.v1.trace_service.TraceService
 import org.http4s.client.Client
 import org.http4s.{Header, Headers, Uri}
 import trace4cats.kernel.SpanExporter

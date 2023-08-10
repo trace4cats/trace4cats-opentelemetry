@@ -3,7 +3,7 @@ package trace4cats.opentelemetry.otlp.proto
 import cats.Foldable
 import cats.syntax.all._
 import com.google.protobuf.ByteString
-import io.opentelemetry.proto.collector.trace.v1.service.ExportTraceServiceRequest
+import io.opentelemetry.proto.collector.trace.v1.trace_service.ExportTraceServiceRequest
 import io.opentelemetry.proto.common.v1.common.{AnyValue, InstrumentationScope, KeyValue}
 import io.opentelemetry.proto.resource.v1.resource.Resource
 import io.opentelemetry.proto.trace.v1.trace.{ResourceSpans, ScopeSpans, Span, Status}
