@@ -7,9 +7,8 @@ import io.opentelemetry.proto.collector.trace.v1.trace_service.TraceService
 import org.http4s.client.Client
 import org.http4s.{Header, Headers, Uri}
 import trace4cats.kernel.SpanExporter
-import trace4cats.model.Batch
+import trace4cats.model.{AttributeValue, Batch}
 import trace4cats.opentelemetry.otlp.proto.ExportSpansRequest
-import trace4cats.model.AttributeValue
 
 object OpenTelemetryOtlpHttp4sGrpcSpanExporter {
 
@@ -54,7 +53,7 @@ object OpenTelemetryOtlpHttp4sGrpcSpanExporter {
   ): SpanExporter[F, G] = new SpanExporter[F, G] {
     private val service = TraceService.fromClient[F](client, uri)
     def exportBatch(batch: Batch[G]): F[Unit] = service
-      .export(ExportSpansRequest.from(batch, resourceAttributes), Headers(staticHeaders))
+      .`export`(ExportSpansRequest.from(batch, resourceAttributes), Headers(staticHeaders))
       .void
   }
 

@@ -93,9 +93,22 @@ lazy val `opentelemetry-otlp-http4s-grpc-exporter` =
   (project in file("modules/opentelemetry-otlp-http4s-grpc-exporter"))
     .settings(publishSettings)
     .settings(
+      crossScalaVersions := Seq(Dependencies.Versions.scala213, Dependencies.Versions.scala3),
       name := "trace4cats-opentelemetry-otlp-http4s-grpc-exporter",
       libraryDependencies ++= Seq(Dependencies.trace4catsCore),
-      Compile / PB.targets ++= Seq(scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb")
+      Compile / PB.targets ++= Seq(scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb"),
+      scalacOptions += {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, _)) => "-Wconf:src=proto/.*:silent"
+          case _ => ""
+        }
+      },
+      scalacOptions -= {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, _)) => ""
+          case _ => "-Wvalue-discard"
+        }
+      }
     )
     .enablePlugins(Http4sGrpcPlugin)
 
