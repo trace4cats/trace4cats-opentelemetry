@@ -74,7 +74,7 @@ jobs:
         run: docker-compose down
 
       - name: Compress target directories
-        run: tar cf targets.tar target modules/opentelemetry-otlp-http-exporter/target modules/opentelemetry-common/target modules/opentelemetry-otlp-grpc-exporter/target modules/opentelemetry-jaeger-exporter/target project/target
+        run: tar cf targets.tar target modules/opentelemetry-otlp-http-exporter/target modules/opentelemetry-common/target modules/opentelemetry-otlp-http4s-grpc-exporter/target modules/opentelemetry-otlp-grpc-exporter/target modules/opentelemetry-jaeger-exporter/target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v2
