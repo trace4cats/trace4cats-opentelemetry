@@ -1,3 +1,4 @@
+import sbtghactions.WorkflowStep.Use
 lazy val commonSettings = Seq(
   Compile / compile / javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
   libraryDependencies ++= {
@@ -97,3 +98,13 @@ lazy val `opentelemetry-otlp-http4s-grpc-exporter` =
       Compile / PB.targets ++= Seq(scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb")
     )
     .enablePlugins(Http4sGrpcPlugin)
+
+ThisBuild / githubWorkflowGeneratedCI ~= { jobs =>
+  jobs.map { job =>
+    job.copy(steps = job.steps.map {
+      case use @ Use(UseRef.Public("actions", "checkout", _), params, _, _, _, _) =>
+        use.copy(params = params + ("submodules" -> "true"))
+      case other => other
+    })
+  }
+}
