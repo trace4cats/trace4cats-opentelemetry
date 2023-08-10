@@ -15,7 +15,10 @@ import java.time.temporal.ChronoUnit
 import scala.collection.mutable.{ListBuffer, Map => MutMap}
 
 object ExportSpansRequest {
-  def from[G[_]: Foldable](batch: Batch[G]): ExportTraceServiceRequest = {
+  def from[G[_]: Foldable](
+    batch: Batch[G],
+    resourceAttributes: Map[String, AttributeValue]
+  ): ExportTraceServiceRequest = {
     def toAttributes(attributes: Map[String, AttributeValue]): List[KeyValue] =
       attributes.view.map { case (k, v) =>
         KeyValue(
@@ -74,9 +77,7 @@ object ExportSpansRequest {
         .view
         .map { case (service, spans) =>
           ResourceSpans(
-            resource = Resource(attributes =
-              List(KeyValue("service.name", AnyValue(AnyValue.Value.StringValue(service)).some))
-            ).some,
+            resource = Resource(attributes = toAttributes(resourceAttributes + ("service.name" -> service))).some,
             scopeSpans = List(ScopeSpans(scope = InstrumentationScope(name = "trace4cats").some, spans = spans.toList))
           )
         }

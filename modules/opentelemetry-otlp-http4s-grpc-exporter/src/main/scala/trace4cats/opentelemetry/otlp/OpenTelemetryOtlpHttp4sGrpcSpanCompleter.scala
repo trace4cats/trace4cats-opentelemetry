@@ -33,7 +33,7 @@ object OpenTelemetryOtlpHttp4sGrpcSpanCompleter {
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
       QueuedSpanCompleter[F](
         process,
-        OpenTelemetryOtlpHttp4sGrpcSpanExporter.fromUri[F, Chunk](client, uri, staticHeaders),
+        OpenTelemetryOtlpHttp4sGrpcSpanExporter.fromUri[F, Chunk](client, uri, staticHeaders, process.attributes),
         config
       )
     }
