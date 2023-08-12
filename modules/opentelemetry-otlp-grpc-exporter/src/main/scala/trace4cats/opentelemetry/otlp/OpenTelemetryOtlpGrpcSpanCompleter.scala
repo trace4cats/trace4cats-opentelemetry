@@ -19,7 +19,7 @@ object OpenTelemetryOtlpGrpcSpanCompleter {
     staticHeaders: List[(CIString, String)] = List.empty
   ): Resource[F, SpanCompleter[F]] =
     Resource.eval(Slf4jLogger.create[F]).flatMap { implicit logger: Logger[F] =>
-      OpenTelemetryOtlpGrpcSpanExporter[F, Chunk](host, port, protocol, staticHeaders)
-        .flatMap(QueuedSpanCompleter[F](process, _, config))
+      OpenTelemetryOtlpGrpcSpanExporter[F, Chunk](host, port, protocol, staticHeaders, process.attributes)
+        .flatMap(QueuedSpanCompleter[F](TraceProcess(process.serviceName), _, config))
     }
 }

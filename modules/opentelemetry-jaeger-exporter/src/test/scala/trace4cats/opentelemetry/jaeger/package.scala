@@ -26,7 +26,8 @@ package object jaeger {
     attrs ++ errorAttrs
   }
 
-  val processTags: TraceProcess => Map[String, AttributeValue] = p => Map("service.name" -> p.serviceName)
+  val processTags: TraceProcess => Map[String, AttributeValue] = p =>
+    Map[String, AttributeValue]("service.name" -> p.serviceName) ++ p.attributes
 
   val additionalTags: Map[String, AttributeValue] =
     Map("otel.library.name" -> "trace4cats", "otel.scope.name" -> "trace4cats")
