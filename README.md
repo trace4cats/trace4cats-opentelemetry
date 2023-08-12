@@ -12,9 +12,10 @@
 Add it to your `build.sbt`:
 
 ```scala
-"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-grpc-exporter" % "0.14.0"
-"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http-exporter" % "0.14.0"
-"io.janstenpickle" %% "trace4cats-opentelemetry-jaeger-exporter" % "0.14.0"
+"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-grpc-exporter" % "0.14.2"
+"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http-exporter" % "0.14.2"
+"io.janstenpickle" %% "trace4cats-opentelemetry-jaeger-exporter" % "0.14.2"
+"io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http4s-grpc-exporter" % "0.14.2"
 ```
 
 

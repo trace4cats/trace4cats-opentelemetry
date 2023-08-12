@@ -8,6 +8,7 @@ import cats.syntax.functor._
 import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.trace.`export`.{SpanExporter => OTSpanExporter}
 import io.opentelemetry.sdk.trace.data.SpanData
+import trace4cats.AttributeValue
 import trace4cats.kernel.SpanExporter
 import trace4cats.model.{Batch, CompletedSpan}
 
@@ -24,6 +25,7 @@ object OpenTelemetryGrpcSpanExporter {
 
   def apply[F[_]: Async, G[_]: Foldable](
     endpoint: Endpoint,
+    resourceAttributes: Map[String, AttributeValue],
     makeExporter: Endpoint => OTSpanExporter,
   ): Resource[F, SpanExporter[F, G]] = {
     def liftCompletableResultCode(fa: F[CompletableResultCode])(onFailure: => Throwable): F[Unit] =
@@ -41,7 +43,7 @@ object OpenTelemetryGrpcSpanExporter {
         spans <- Sync[F].delay(
           spans
             .foldLeft(ListBuffer.empty[SpanData]) { (buf, span) =>
-              buf += Trace4CatsSpanData(Trace4CatsResource(span.serviceName), span)
+              buf += Trace4CatsSpanData(Trace4CatsResource(span.serviceName, resourceAttributes), span)
             }
             .asJavaCollection
         )

@@ -6,3 +6,6 @@ local.*
 .bsp
 .java-version
 **/.DS_store
+
+.metals
+.bloop
