@@ -10,7 +10,7 @@ object Dependencies {
     val trace4catsExporterHttp = "0.14.0"
     val trace4catsJaegerIntegrationTest = "0.14.2"
 
-    val autoValue = "1.10.3"
+    val autoValue = "1.10.4"
     val circe = "0.14.5"
     val collectionCompat = "2.11.0"
     val grpc = "1.49.2"
