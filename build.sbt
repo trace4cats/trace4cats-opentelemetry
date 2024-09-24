@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
   .settings(name := "Trace4Cats OpenTelemetry")
   .aggregate(
     `opentelemetry-common`,
-    `opentelemetry-jaeger-exporter`,
+//    `opentelemetry-jaeger-exporter`,
     `opentelemetry-otlp-grpc-exporter`,
     `opentelemetry-otlp-http-exporter`,
     `opentelemetry-otlp-http4s-grpc-exporter`
@@ -55,15 +55,15 @@ lazy val `opentelemetry-common` =
       )
     )
 
-lazy val `opentelemetry-jaeger-exporter` =
-  (project in file("modules/opentelemetry-jaeger-exporter"))
-    .settings(publishSettings)
-    .settings(
-      name := "trace4cats-opentelemetry-jaeger-exporter",
-      libraryDependencies ++= Seq(Dependencies.openTelemetryJaegerExporter),
-      libraryDependencies ++= Seq(Dependencies.grpcOkHttp, Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test)
-    )
-    .dependsOn(`opentelemetry-common`)
+//lazy val `opentelemetry-jaeger-exporter` =
+//  (project in file("modules/opentelemetry-jaeger-exporter"))
+//    .settings(publishSettings)
+//    .settings(
+//      name := "trace4cats-opentelemetry-jaeger-exporter",
+////      libraryDependencies ++= Seq(Dependencies.openTelemetryJaegerExporter),
+//      libraryDependencies ++= Seq(Dependencies.grpcOkHttp, Dependencies.trace4catsJaegerIntegrationTest).map(_ % Test)
+//    )
+//    .dependsOn(`opentelemetry-common`)
 
 lazy val `opentelemetry-otlp-grpc-exporter` =
   (project in file("modules/opentelemetry-otlp-grpc-exporter"))

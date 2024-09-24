@@ -15,7 +15,8 @@ object Dependencies {
     val collectionCompat = "2.11.0"
     val grpc = "1.49.2"
     val http4s = "0.23.25"
-    val openTelemetry = "1.27.0"
+    val openTelemetry = "1.42.1" // 1.27.0
+//    val openTelemetryJaeger = "1.34.1"
 
     val kindProjector = "0.13.2"
     val betterMonadicFor = "0.3.1"
@@ -35,7 +36,7 @@ object Dependencies {
   lazy val http4sCirce = "org.http4s"                    %% "http4s-circe"                % Versions.http4s
   lazy val openTelemetrySdk = "io.opentelemetry"          % "opentelemetry-sdk"           % Versions.openTelemetry
   lazy val openTelemetryOtlpExporter = "io.opentelemetry" % "opentelemetry-exporter-otlp" % Versions.openTelemetry
-  lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetry
+//  lazy val openTelemetryJaegerExporter = "io.opentelemetry" % "opentelemetry-exporter-jaeger" % Versions.openTelemetryJaeger
 
   lazy val kindProjector = ("org.typelevel" % "kind-projector"     % Versions.kindProjector).cross(CrossVersion.full)
   lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
